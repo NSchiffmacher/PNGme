@@ -7,7 +7,7 @@ use std::error::Error;
 
 use crc::{Crc, CRC_32_ISO_HDLC};
 
-struct Chunk {
+pub struct Chunk {
     chunk_type: ChunkType,
     data: Vec<u8>,
 }
@@ -86,7 +86,7 @@ impl TryFrom<&[u8]> for Chunk {
         let crc = u32::from_be_bytes((&value[8+(length as usize)..]).try_into()?);
 
         let chunk = Chunk::new(chunk_type, chunk_data);
-        if (chunk.crc() != crc) {
+        if chunk.crc() != crc {
             Err(ChunkDecodingError::boxed(format!("CRC mismatch (received {}, expected {})", crc, chunk.crc())))
         } else {
             Ok(chunk)
